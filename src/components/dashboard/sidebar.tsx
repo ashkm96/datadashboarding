@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
       ? "bg-primary text-primary-foreground font-medium shadow-soft" 
-      : "hover:bg-muted/60 transition-colors";
+      : "hover:bg-muted/60 transition-colors text-foreground";
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
@@ -64,7 +64,7 @@ export function DashboardSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Analytics</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-muted-foreground">Analytics</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -83,7 +83,7 @@ export function DashboardSidebar() {
 
         {/* Company Settings */}
         <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-muted-foreground">Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {companyItems.map((item) => (
