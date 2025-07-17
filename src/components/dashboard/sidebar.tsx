@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
       ? "bg-primary text-primary-foreground font-medium shadow-soft" 
-      : "hover:bg-muted/60 transition-colors text-foreground";
+      : "hover:bg-muted/60 transition-colors text-sidebar-foreground";
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
