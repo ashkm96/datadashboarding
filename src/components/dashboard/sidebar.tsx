@@ -30,7 +30,7 @@ const navigationItems = [
 ];
 
 const companyItems = [
-  { title: "Company Settings", url: "/settings", icon: Settings },
+  { title: "Payments & Billing", url: "/payments", icon: Settings },
   { title: "Notifications", url: "/notifications", icon: Bell },
 ];
 
@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
       ? "bg-primary text-primary-foreground font-medium shadow-soft" 
-      : "hover:bg-muted/60 transition-colors text-sidebar-foreground";
+      : "hover:bg-muted/60 transition-colors text-foreground";
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
@@ -64,7 +64,7 @@ export function DashboardSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground">Analytics</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground font-medium">Analytics</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -72,7 +72,7 @@ export function DashboardSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      {!isCollapsed && <span className="text-foreground">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -83,7 +83,7 @@ export function DashboardSidebar() {
 
         {/* Company Settings */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground">Settings</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-foreground font-medium">Settings</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {companyItems.map((item) => (
@@ -91,7 +91,7 @@ export function DashboardSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} className={getNavCls}>
                       <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      {!isCollapsed && <span className="text-foreground">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
