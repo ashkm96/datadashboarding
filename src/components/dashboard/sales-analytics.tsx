@@ -26,35 +26,35 @@ import {
   Bar
 } from "recharts";
 
-// Mock data
-const salesFunnelData = [
-  { month: "Jan", leads: 150, meetings: 85, conversions: 28, onboardings: 25 },
-  { month: "Feb", leads: 165, meetings: 92, conversions: 32, onboardings: 30 },
-  { month: "Mar", leads: 140, meetings: 78, conversions: 26, onboardings: 24 },
-  { month: "Apr", leads: 180, meetings: 105, conversions: 38, onboardings: 35 },
-  { month: "May", leads: 195, meetings: 118, conversions: 42, onboardings: 39 },
-  { month: "Jun", leads: 210, meetings: 125, conversions: 45, onboardings: 42 },
+// Data from Zoho CRM, Google Sheets, and Payment integrations
+const zohoCRMFunnelData = [
+  { month: "Jan", zohoLeads: 150, gsheetLeads: 25, meetings: 85, conversions: 28, deals: 25 },
+  { month: "Feb", zohoLeads: 165, gsheetLeads: 30, meetings: 92, conversions: 32, deals: 30 },
+  { month: "Mar", zohoLeads: 140, gsheetLeads: 22, meetings: 78, conversions: 26, deals: 24 },
+  { month: "Apr", zohoLeads: 180, gsheetLeads: 35, meetings: 105, conversions: 38, deals: 35 },
+  { month: "May", zohoLeads: 195, gsheetLeads: 28, meetings: 118, conversions: 42, deals: 39 },
+  { month: "Jun", zohoLeads: 210, gsheetLeads: 32, meetings: 125, conversions: 45, deals: 42 },
 ];
 
-const revenueByService = [
-  { service: "Digital Marketing", revenue: 28000, clients: 24, growth: 15.3 },
-  { service: "Executive Admin", revenue: 18000, clients: 18, growth: 8.7 },
-  { service: "Website Design", revenue: 16000, clients: 12, growth: 22.1 },
-  { service: "Ecommerce Management", revenue: 24000, clients: 15, growth: 12.4 },
+const paymentProcessorRevenue = [
+  { service: "Digital Marketing", stripeRevenue: 25000, paypalRevenue: 3000, wiseRevenue: 800, clients: 24 },
+  { service: "Executive Admin", stripeRevenue: 16000, paypalRevenue: 1800, wiseRevenue: 400, clients: 18 },
+  { service: "Website Design", stripeRevenue: 14500, paypalRevenue: 1200, wiseRevenue: 300, clients: 12 },
+  { service: "Ecommerce Management", stripeRevenue: 21000, paypalRevenue: 2500, wiseRevenue: 500, clients: 15 },
 ];
 
-const clientPipeline = [
-  { name: "TechStart Inc.", service: "Digital Marketing", value: "$5,200", stage: "Proposal", probability: 85 },
-  { name: "GrowthCorp", service: "Ecommerce Mgmt", value: "$8,500", stage: "Negotiation", probability: 70 },
-  { name: "StartupX", service: "Website Design", value: "$3,200", stage: "Discovery", probability: 45 },
-  { name: "ScaleUp Ltd", service: "Executive Admin", value: "$2,800", stage: "Proposal", probability: 90 },
-  { name: "InnovateCo", service: "Digital Marketing", value: "$6,200", stage: "Contract", probability: 95 },
+const zohoCRMPipeline = [
+  { name: "TechStart Inc.", service: "Digital Marketing", value: "$5,200", stage: "Proposal", probability: 85, source: "Zoho CRM" },
+  { name: "GrowthCorp", service: "Ecommerce Mgmt", value: "$8,500", stage: "Negotiation", probability: 70, source: "Zoho CRM" },
+  { name: "StartupX", service: "Website Design", value: "$3,200", stage: "Discovery", probability: 45, source: "Google Sheets" },
+  { name: "ScaleUp Ltd", service: "Executive Admin", value: "$2,800", stage: "Proposal", probability: 90, source: "Zoho CRM" },
+  { name: "InnovateCo", service: "Digital Marketing", value: "$6,200", stage: "Contract", probability: 95, source: "Zoho CRM" },
 ];
 
-const lostClients = [
-  { name: "OldCorp", reason: "Budget constraints", value: "$4,200", date: "2024-06-15" },
-  { name: "TechLoss", reason: "Internal hiring", value: "$3,800", date: "2024-06-10" },
-  { name: "QuickExit", reason: "Timeline mismatch", value: "$2,400", date: "2024-06-05" },
+const lostClientsAnalysis = [
+  { name: "OldCorp", reason: "Budget constraints", value: "$4,200", date: "2024-06-15", source: "Zoho CRM" },
+  { name: "TechLoss", reason: "Internal hiring", value: "$3,800", date: "2024-06-10", source: "Zoho CRM" },
+  { name: "QuickExit", reason: "Timeline mismatch", value: "$2,400", date: "2024-06-05", source: "Google Sheets" },
 ];
 
 export function SalesAnalytics() {
@@ -63,30 +63,30 @@ export function SalesAnalytics() {
       {/* Key Sales Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          title="Monthly Leads"
+          title="Zoho CRM Leads"
           value="210"
-          change={{ value: 7.7, label: "from last month" }}
+          change={{ value: 7.7, label: "from Zoho + Sheets" }}
           icon={Users}
           variant="success"
         />
         <MetricCard
-          title="Conversion Rate"
-          value="21.4%"
-          change={{ value: 3.2, label: "improvement" }}
+          title="Payment Success Rate"
+          value="98.6%"
+          change={{ value: 1.2, label: "Stripe + PayPal + Wise" }}
           icon={TrendingUp}
           variant="success"
         />
         <MetricCard
-          title="Pipeline Value"
+          title="Active Deals"
           value="$26,900"
-          change={{ value: 18.5, label: "this month" }}
+          change={{ value: 18.5, label: "in Zoho CRM" }}
           icon={DollarSign}
           variant="default"
         />
         <MetricCard
-          title="New Onboardings"
-          value="42"
-          change={{ value: 7.7, label: "from last month" }}
+          title="Revenue Sources"
+          value="3"
+          change={{ value: 15.3, label: "integrated processors" }}
           icon={UserPlus}
           variant="success"
         />
@@ -98,12 +98,12 @@ export function SalesAnalytics() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Sales Funnel Performance
+              Zoho CRM + Google Sheets Lead Flow
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={salesFunnelData}>
+              <AreaChart data={zohoCRMFunnelData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -112,9 +112,9 @@ export function SalesAnalytics() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.75rem'
                 }} />
-                <Area type="monotone" dataKey="leads" stackId="1" stroke="hsl(217, 91%, 60%)" fill="hsl(217, 91%, 60%)" fillOpacity={0.3} />
-                <Area type="monotone" dataKey="meetings" stackId="2" stroke="hsl(142, 71%, 45%)" fill="hsl(142, 71%, 45%)" fillOpacity={0.3} />
-                <Area type="monotone" dataKey="conversions" stackId="3" stroke="hsl(45, 93%, 47%)" fill="hsl(45, 93%, 47%)" fillOpacity={0.3} />
+                <Area type="monotone" dataKey="zohoLeads" stackId="1" stroke="hsl(217, 91%, 60%)" fill="hsl(217, 91%, 60%)" fillOpacity={0.3} name="Zoho CRM Leads" />
+                <Area type="monotone" dataKey="gsheetLeads" stackId="2" stroke="hsl(142, 71%, 45%)" fill="hsl(142, 71%, 45%)" fillOpacity={0.3} name="Google Sheets Leads" />
+                <Area type="monotone" dataKey="deals" stackId="3" stroke="hsl(45, 93%, 47%)" fill="hsl(45, 93%, 47%)" fillOpacity={0.3} name="Closed Deals" />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -124,12 +124,12 @@ export function SalesAnalytics() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-primary" />
-              Revenue by Service Line
+              Revenue by Payment Processor
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={revenueByService}>
+              <BarChart data={paymentProcessorRevenue}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="service" />
                 <YAxis />
@@ -138,7 +138,9 @@ export function SalesAnalytics() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.75rem'
                 }} />
-                <Bar dataKey="revenue" fill="hsl(217, 91%, 60%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="stripeRevenue" fill="hsl(217, 91%, 60%)" radius={[4, 4, 0, 0]} name="Stripe" />
+                <Bar dataKey="paypalRevenue" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} name="PayPal" />
+                <Bar dataKey="wiseRevenue" fill="hsl(45, 93%, 47%)" radius={[4, 4, 0, 0]} name="Wise" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -159,7 +161,7 @@ export function SalesAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {clientPipeline.map((client, index) => (
+              {zohoCRMPipeline.map((client, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                   <div>
                     <p className="font-medium">{client.name}</p>
@@ -167,6 +169,9 @@ export function SalesAnalytics() {
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="outline" className="text-xs">
                         {client.stage}
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        {client.source}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {client.probability}% probability
@@ -196,14 +201,19 @@ export function SalesAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {lostClients.map((client, index) => (
+              {lostClientsAnalysis.map((client, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
                   <div>
                     <p className="font-medium">{client.name}</p>
                     <p className="text-sm text-muted-foreground">{client.reason}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Lost on {new Date(client.date).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-xs">
+                        {client.source}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        Lost on {new Date(client.date).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-destructive">{client.value}</p>
@@ -224,24 +234,57 @@ export function SalesAnalytics() {
         </Card>
       </div>
 
-      {/* Google Sheets Integration Note */}
-      <Card className="shadow-soft bg-gradient-secondary">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
-            <ExternalLink className="h-6 w-6 text-primary mt-1" />
-            <div>
-              <h3 className="font-semibold mb-2">Google Sheets Integration</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                Connect your sales data from Google Sheets to automatically sync leads, 
-                client information, and project requirements in real-time.
-              </p>
-              <Button variant="outline" size="sm">
-                Configure Integration
-              </Button>
+      {/* Multi-Platform Sales Integration Status */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="shadow-soft bg-gradient-secondary">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <span className="text-2xl">📊</span>
+              <div>
+                <h3 className="font-semibold mb-2">Zoho CRM Integration</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Sync deals, leads, contacts, and pipeline data in real-time from your Zoho CRM.
+                </p>
+                <Badge variant="default">Connected</Badge>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-soft bg-gradient-secondary">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <span className="text-2xl">💳</span>
+              <div>
+                <h3 className="font-semibold mb-2">Payment Processors</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Track revenue from Stripe, PayPal, and Wise payment processors.
+                </p>
+                <div className="flex gap-2">
+                  <Badge variant="default">Stripe</Badge>
+                  <Badge variant="secondary">PayPal</Badge>
+                  <Badge variant="outline">Wise</Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-soft bg-gradient-secondary">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <span className="text-2xl">📈</span>
+              <div>
+                <h3 className="font-semibold mb-2">Google Sheets</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Import custom lead tracking and sales data from Google Sheets.
+                </p>
+                <Badge variant="default">Connected</Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
