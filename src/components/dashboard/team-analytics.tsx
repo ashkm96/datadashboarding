@@ -2,6 +2,7 @@ import { MetricCard } from "./metric-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   Users, 
   Clock, 
@@ -9,8 +10,11 @@ import {
   Star,
   TrendingUp,
   Calendar,
-  BarChart3
+  BarChart3,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
+import { useState } from "react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -98,10 +102,21 @@ const teamLoggerBillableData = [
 ];
 
 export function TeamAnalytics() {
+  const [openDepartments, setOpenDepartments] = useState<Record<string, boolean>>({});
+  const [openSkills, setOpenSkills] = useState<Record<string, boolean>>({});
+  
   const totalTeamMembers = teamLoggerUtilization.length;
   const avgUtilization = Math.round(teamLoggerUtilization.reduce((acc, member) => acc + (member.hours_tracked / member.hours_available * 100), 0) / totalTeamMembers);
   const avgEfficiency = Math.round(teamLoggerUtilization.reduce((acc, member) => acc + member.productivity_score, 0) / totalTeamMembers);
   const avgClientScore = (slackClientFeedback.reduce((acc, feedback) => acc + feedback.score, 0) / slackClientFeedback.length).toFixed(1);
+
+  const toggleDepartment = (department: string) => {
+    setOpenDepartments(prev => ({ ...prev, [department]: !prev[department] }));
+  };
+
+  const toggleSkill = (skillKey: string) => {
+    setOpenSkills(prev => ({ ...prev, [skillKey]: !prev[skillKey] }));
+  };
 
   return (
     <div className="space-y-6">
@@ -220,48 +235,87 @@ export function TeamAnalytics() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {proorhubDepartmentData.map((dept, index) => (
-                <div key={index} className="space-y-3">
-                  {/* Department Header */}
-                  <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border-l-4 border-primary">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-lg">{dept.department}</h4>
-                      <div className="text-right">
-                        <p className="text-sm font-medium">
-                          {dept.active_projects} active projects | {dept.team_size} members
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {dept.avg_completion}% avg completion
-                        </p>
+                <Collapsible 
+                  key={index} 
+                  open={openDepartments[dept.department]} 
+                  onOpenChange={() => toggleDepartment(dept.department)}
+                >
+                  <CollapsibleTrigger className="w-full">
+                    <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border-l-4 border-primary hover:from-primary/15 hover:to-primary/8 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {openDepartments[dept.department] ? 
+                            <ChevronDown className="h-4 w-4" /> : 
+                            <ChevronRight className="h-4 w-4" />
+                          }
+                          <h4 className="font-semibold text-lg text-left">{dept.department}</h4>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">
+                            {dept.active_projects} active projects | {dept.team_size} members
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {dept.avg_completion}% avg completion
+                          </p>
+                        </div>
                       </div>
+                      <Progress value={dept.avg_completion} className="h-2 mt-2" />
                     </div>
-                    <Progress value={dept.avg_completion} className="h-2 mt-2" />
-                  </div>
-
-                  {/* Skills within Department */}
-                  <div className="ml-4 space-y-2">
-                    {dept.skills.map((skill, skillIndex) => (
-                      <div key={skillIndex} className="p-2 bg-muted/20 rounded border-l-2 border-muted">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="font-medium text-sm">{skill.name}</p>
-                          <div className="text-right">
-                            <p className="text-xs font-medium">
-                              {skill.projects} projects | {skill.members} member{skill.members > 1 ? 's' : ''}
-                            </p>
-                          </div>
-                        </div>
-                        <Progress value={skill.capacity} className="h-1.5" />
-                        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                          <span>Capacity: {skill.capacity}%</span>
-                          <Badge variant={skill.capacity > 90 ? "default" : skill.capacity > 80 ? "secondary" : "outline"} className="text-xs">
-                            {skill.capacity > 90 ? "High" : skill.capacity > 80 ? "Good" : "Available"}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent className="ml-4 mt-2">
+                    <div className="space-y-2">
+                      {dept.skills.map((skill, skillIndex) => {
+                        const skillKey = `${dept.department}-${skill.name}`;
+                        return (
+                          <Collapsible 
+                            key={skillIndex}
+                            open={openSkills[skillKey]} 
+                            onOpenChange={() => toggleSkill(skillKey)}
+                          >
+                            <CollapsibleTrigger className="w-full">
+                              <div className="p-2 bg-muted/20 rounded border-l-2 border-muted hover:bg-muted/30 transition-colors">
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center gap-2">
+                                    {openSkills[skillKey] ? 
+                                      <ChevronDown className="h-3 w-3" /> : 
+                                      <ChevronRight className="h-3 w-3" />
+                                    }
+                                    <p className="font-medium text-sm text-left">{skill.name}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-xs font-medium">
+                                      {skill.projects} projects | {skill.members} member{skill.members > 1 ? 's' : ''}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Progress value={skill.capacity} className="h-1.5" />
+                              </div>
+                            </CollapsibleTrigger>
+                            
+                            <CollapsibleContent className="ml-4 mt-1">
+                              <div className="p-2 bg-muted/10 rounded text-xs space-y-1">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-muted-foreground">Capacity: {skill.capacity}%</span>
+                                  <Badge variant={skill.capacity > 90 ? "default" : skill.capacity > 80 ? "secondary" : "outline"} className="text-xs">
+                                    {skill.capacity > 90 ? "High Load" : skill.capacity > 80 ? "Good" : "Available"}
+                                  </Badge>
+                                </div>
+                                <div className="text-muted-foreground">
+                                  <p>Active Projects: {skill.projects}</p>
+                                  <p>Team Members: {skill.members}</p>
+                                  <p>Workload Status: {skill.capacity > 90 ? "At capacity" : skill.capacity > 80 ? "Well utilized" : "Can take more work"}</p>
+                                </div>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        );
+                      })}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               ))}
             </div>
           </CardContent>
