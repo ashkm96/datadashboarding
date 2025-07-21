@@ -36,11 +36,51 @@ const teamLoggerUtilization = [
   { name: "James Thompson", role: "VA - Admin Support", hours_available: 40, hours_tracked: 28, productivity_score: 85, billable_hours: 25, proorhub_tasks: 15 },
 ];
 
-const proorhubProjectData = [
-  { skill: "Digital Marketing", active_projects: 8, completed_tasks: 156, team_size: 3, avg_completion: 92 },
-  { skill: "Executive Admin", active_projects: 6, completed_tasks: 128, team_size: 2, avg_completion: 88 },
-  { skill: "Web Design", active_projects: 4, completed_tasks: 94, team_size: 1, avg_completion: 94 },
-  { skill: "Ecommerce", active_projects: 5, completed_tasks: 142, team_size: 1, avg_completion: 89 },
+const proorhubDepartmentData = [
+  {
+    department: "Digital Marketing",
+    active_projects: 8,
+    team_size: 3,
+    avg_completion: 92,
+    skills: [
+      { name: "SEO/SEM", capacity: 85, projects: 3, members: 1 },
+      { name: "Content Marketing", capacity: 90, projects: 2, members: 1 },
+      { name: "Social Media", capacity: 88, projects: 3, members: 1 }
+    ]
+  },
+  {
+    department: "Executive Admin",
+    active_projects: 6,
+    team_size: 2,
+    avg_completion: 88,
+    skills: [
+      { name: "Client Relations", capacity: 92, projects: 3, members: 1 },
+      { name: "Operations", capacity: 85, projects: 2, members: 1 },
+      { name: "Documentation", capacity: 87, projects: 1, members: 1 }
+    ]
+  },
+  {
+    department: "Web Design and Ecommerce",
+    active_projects: 9,
+    team_size: 2,
+    avg_completion: 91,
+    skills: [
+      { name: "UI/UX Design", capacity: 94, projects: 4, members: 1 },
+      { name: "Frontend Development", capacity: 89, projects: 2, members: 1 },
+      { name: "Ecommerce Setup", capacity: 90, projects: 3, members: 1 }
+    ]
+  },
+  {
+    department: "CRM",
+    active_projects: 4,
+    team_size: 2,
+    avg_completion: 86,
+    skills: [
+      { name: "Data Management", capacity: 88, projects: 2, members: 1 },
+      { name: "Customer Analytics", capacity: 85, projects: 1, members: 1 },
+      { name: "Process Automation", capacity: 84, projects: 1, members: 1 }
+    ]
+  }
 ];
 
 const slackClientFeedback = [
@@ -180,26 +220,46 @@ export function TeamAnalytics() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {proorhubProjectData.map((skill, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium">{skill.skill}</p>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        {skill.active_projects} active projects | {skill.team_size} members
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {skill.completed_tasks} tasks completed
-                      </p>
+            <div className="space-y-6">
+              {proorhubDepartmentData.map((dept, index) => (
+                <div key={index} className="space-y-3">
+                  {/* Department Header */}
+                  <div className="p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border-l-4 border-primary">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-lg">{dept.department}</h4>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">
+                          {dept.active_projects} active projects | {dept.team_size} members
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {dept.avg_completion}% avg completion
+                        </p>
+                      </div>
                     </div>
+                    <Progress value={dept.avg_completion} className="h-2 mt-2" />
                   </div>
-                  <Progress value={skill.avg_completion} className="h-2" />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Completion rate: {skill.avg_completion}%</span>
-                    <span className={skill.avg_completion > 90 ? "text-success" : "text-warning"}>
-                      {skill.avg_completion > 90 ? "Excellent" : "Good"}
-                    </span>
+
+                  {/* Skills within Department */}
+                  <div className="ml-4 space-y-2">
+                    {dept.skills.map((skill, skillIndex) => (
+                      <div key={skillIndex} className="p-2 bg-muted/20 rounded border-l-2 border-muted">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-sm">{skill.name}</p>
+                          <div className="text-right">
+                            <p className="text-xs font-medium">
+                              {skill.projects} projects | {skill.members} member{skill.members > 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+                        <Progress value={skill.capacity} className="h-1.5" />
+                        <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                          <span>Capacity: {skill.capacity}%</span>
+                          <Badge variant={skill.capacity > 90 ? "default" : skill.capacity > 80 ? "secondary" : "outline"} className="text-xs">
+                            {skill.capacity > 90 ? "High" : skill.capacity > 80 ? "Good" : "Available"}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
